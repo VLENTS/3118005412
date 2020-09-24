@@ -1,12 +1,5 @@
-#include <io.h>
-#include <direct.h>
-#include <iomanip>
-#include <iostream>
-#include <algorithm>
-#include <fstream>
-#include <codecvt>
-#include <vector>
-#include <ctime>
+#include "main.h"
+
 using namespace std;
 typedef long long LL;
 typedef pair<int, int> P;
@@ -96,32 +89,42 @@ void CreatDir(string dir) {
 	if (_access(dir.c_str(), 00) == -1)
 		CreatDir(dir.substr(0, dir.rfind('\\')));
 	else return;
-	int neglect = _mkdir(dir.c_str());
+	_mkdir(dir.c_str());
 }
 
-int main(int argc, char* argv[]) {
+double solve(int argc, char* argv[]) {
 	clock_t st, et;
 	st = clock();
+	double ans=-1;
 	if (check(argc, argv)) {
 		adr_r = string(argv[1]); adr_t = string(argv[2]); adr_a = string(argv[3]);
 		//IO
-		ifstream refer, test; 
-		refer.open(adr_r); test.open(adr_t); 
-		
-		ofstream out; 
+		ifstream refer, test;
+		refer.open(adr_r); test.open(adr_t);
+
+		ofstream out;
 		CreatDir(adr_a.substr(0, adr_a.rfind('\\')));
 		out.open(adr_a);
-		
+
 		s.append(L" "); t.append(L" ");
 		string temp;
 		while (refer >> temp) s.append(UTF8ToUnicode(temp));
 		while (test >> temp) t.append(UTF8ToUnicode(temp));
+		if (s.length() <= 1 || t.length() <= 1) {
+			et = clock();
+			cout << "runtime:" << 1.0 * (0LL + et - st) / CLOCKS_PER_SEC << "s\n";
+			return ans;
+		}
 		//核心算法处理
-		init();	
-		out << fixed << setprecision(3) << 100.0 * dp() / (t.length() - 1) << "%\n";
+		init(); ans = 100.0 * dp() / (t.length() - 1);
+		out << fixed << setprecision(3) << ans << "%\n";
 		refer.close(); test.close(); out.close();
 	}
 	et = clock();
 	cout << "runtime:" << 1.0 * (0LL + et - st) / CLOCKS_PER_SEC << "s\n";
-	return 0;
+	return ans;
+}
+
+int main(int argc, char* argv[]) {
+	double ans = solve(argc, argv);
 }
